@@ -22,6 +22,14 @@ let triangle = SKSpriteNode(imageNamed: "triangle")
 triangle.name = "shape"
 triangle.position = CGPoint(x: scene.size.width*0.75, y: scene.size.height*0.5)
 
+let l = SKSpriteNode(imageNamed: "L")
+l.name = "shape"
+l.position = CGPoint(x: scene.size.width * 0.5,
+  y: scene.size.height * 0.75)
+l.physicsBody = SKPhysicsBody(texture: l.texture!, size: l.size)
+scene.addChild(l)
+
+
 scene.addChild(square)
 scene.addChild(circle)
 scene.addChild(triangle)
@@ -34,6 +42,8 @@ func createSandParticles() {
   sand.physicsBody = SKPhysicsBody(circleOfRadius:
     sand.size.width/2)
   sand.name = "sand"
+    sand.physicsBody?.restitution = 1.0
+    sand.physicsBody?.density = 20.0
   scene.addChild(sand)
 }
 
@@ -54,6 +64,7 @@ delay(seconds: 2.0) {
 }
 
 sceneView.showsFPS = true
+sceneView.showsPhysics = true
 sceneView.presentScene(scene)
 
 PlaygroundPage.current.needsIndefiniteExecution = true
