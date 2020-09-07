@@ -2,6 +2,7 @@
 
 import PlaygroundSupport
 import SpriteKit
+import CoreGraphics
 
 let sceneView = SKView(frame: CGRect(x: 0, y: 0, width: 480,
   height: 320))
@@ -25,11 +26,31 @@ scene.addChild(square)
 scene.addChild(circle)
 scene.addChild(triangle)
 
+func createSandParticles() {
+  let sand = SKSpriteNode(imageNamed: "sand")
+  sand.position = CGPoint(
+    x: random(min: 0.0, max: scene.size.width),
+    y: scene.size.height - sand.size.height)
+  sand.physicsBody = SKPhysicsBody(circleOfRadius:
+    sand.size.width/2)
+  sand.name = "sand"
+  scene.addChild(sand)
+}
+
+
 scene.physicsBody = SKPhysicsBody(edgeLoopFrom: scene.frame)
 scene.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
 //Setting Gravity after 2 seconds delay
 delay(seconds: 2.0) {
     scene.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+    scene.run(
+        SKAction.repeat(
+            SKAction.sequence([
+                SKAction.run(createSandParticles),
+                SKAction.wait(forDuration: 0.1)
+            ])
+            , count: 100)
+    )
 }
 
 sceneView.showsFPS = true
