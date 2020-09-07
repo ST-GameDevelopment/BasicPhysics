@@ -42,8 +42,8 @@ func createSandParticles() {
   sand.physicsBody = SKPhysicsBody(circleOfRadius:
     sand.size.width/2)
   sand.name = "sand"
-    sand.physicsBody?.restitution = 1.0
-    sand.physicsBody?.density = 20.0
+//    sand.physicsBody?.restitution = 1.0
+//    sand.physicsBody?.density = 20.0
   scene.addChild(sand)
 }
 
