@@ -4,8 +4,11 @@ import PlaygroundSupport
 import SpriteKit
 import CoreGraphics
 
+var blowingRight = true
+var windForce = CGVector(dx: 50, dy: 0)
+
 let sceneView = SKView(frame: CGRect(x: 0, y: 0, width: 480,
-  height: 320))
+                                     height: 320))
 let scene = SKScene(size: CGSize(width: 480, height: 320))
 
 let square = SKSpriteNode(imageNamed: "square")
@@ -25,7 +28,7 @@ triangle.position = CGPoint(x: scene.size.width*0.75, y: scene.size.height*0.5)
 let l = SKSpriteNode(imageNamed: "L")
 l.name = "shape"
 l.position = CGPoint(x: scene.size.width * 0.5,
-  y: scene.size.height * 0.75)
+                     y: scene.size.height * 0.75)
 l.physicsBody = SKPhysicsBody(texture: l.texture!, size: l.size)
 scene.addChild(l)
 
@@ -35,29 +38,29 @@ scene.addChild(circle)
 scene.addChild(triangle)
 
 func createSandParticles() {
-  let sand = SKSpriteNode(imageNamed: "sand")
-  sand.position = CGPoint(
-    x: random(min: 0.0, max: scene.size.width),
-    y: scene.size.height - sand.size.height)
-  sand.physicsBody = SKPhysicsBody(circleOfRadius:
-    sand.size.width/2)
-  sand.name = "sand"
-//    sand.physicsBody?.restitution = 1.0
-//    sand.physicsBody?.density = 20.0
-  scene.addChild(sand)
+    let sand = SKSpriteNode(imageNamed: "sand")
+    sand.position = CGPoint(
+        x: random(min: 0.0, max: scene.size.width),
+        y: scene.size.height - sand.size.height)
+    sand.physicsBody = SKPhysicsBody(circleOfRadius:
+        sand.size.width/2)
+    sand.name = "sand"
+    //    sand.physicsBody?.restitution = 1.0
+    //    sand.physicsBody?.density = 20.0
+    scene.addChild(sand)
 }
 
 func shake() {
-  scene.enumerateChildNodes(withName: "sand") { node, _ in
-    node.physicsBody!.applyImpulse(
-      CGVector(dx: 0, dy: random(min: 20, max: 40))
-    )
-  }
- scene.enumerateChildNodes(withName: "shape") { node, _ in
-      node.physicsBody?.applyImpulse(
-        CGVector(dx: random(min:20, max:60),
-                 dy: random(min:20, max:60))
-      )
+    scene.enumerateChildNodes(withName: "sand") { node, _ in
+        node.physicsBody!.applyImpulse(
+            CGVector(dx: 0, dy: random(min: 20, max: 40))
+        )
+    }
+    scene.enumerateChildNodes(withName: "shape") { node, _ in
+        node.physicsBody?.applyImpulse(
+            CGVector(dx: random(min:20, max:60),
+                     dy: random(min:20, max:60))
+        )
     }
     delay(seconds: 3, completion: shake)
 }
@@ -78,6 +81,14 @@ delay(seconds: 2.0) {
     delay(seconds: 12, completion: shake)
 }
 
+Timer.scheduledTimer(timeInterval: 0.05, target: scene,
+  selector: #selector(SKScene.applyWindForce),
+  userInfo: nil, repeats: true)
+
+Timer.scheduledTimer(timeInterval: 3.0, target: scene,
+  selector: #selector(SKScene.switchWindDirection),
+  userInfo: nil, repeats: true)
+
 sceneView.showsFPS = true
 sceneView.showsPhysics = true
 sceneView.presentScene(scene)
@@ -85,4 +96,20 @@ sceneView.presentScene(scene)
 PlaygroundPage.current.needsIndefiniteExecution = true
 PlaygroundPage.current.liveView = sceneView
 
-
+extension SKScene {
+    
+    @objc func applyWindForce() {
+        enumerateChildNodes(withName: "sand") { node, _ in
+            node.physicsBody?.applyForce(windForce)
+        }
+        enumerateChildNodes(withName: "shape") { node, _ in
+            node.physicsBody?.applyForce(windForce)
+        }
+    }
+    
+    @objc func switchWindDirection() {
+        blowingRight = !blowingRight
+        windForce = CGVector(dx: blowingRight ? 50 : -50, dy: 0)
+    }
+    
+}
