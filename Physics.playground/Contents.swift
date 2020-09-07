@@ -47,6 +47,20 @@ func createSandParticles() {
   scene.addChild(sand)
 }
 
+func shake() {
+  scene.enumerateChildNodes(withName: "sand") { node, _ in
+    node.physicsBody!.applyImpulse(
+      CGVector(dx: 0, dy: random(min: 20, max: 40))
+    )
+  }
+ scene.enumerateChildNodes(withName: "shape") { node, _ in
+      node.physicsBody?.applyImpulse(
+        CGVector(dx: random(min:20, max:60),
+                 dy: random(min:20, max:60))
+      )
+    }
+    delay(seconds: 3, completion: shake)
+}
 
 scene.physicsBody = SKPhysicsBody(edgeLoopFrom: scene.frame)
 scene.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -61,6 +75,7 @@ delay(seconds: 2.0) {
             ])
             , count: 100)
     )
+    delay(seconds: 12, completion: shake)
 }
 
 sceneView.showsFPS = true
